@@ -3,325 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Solutions Encryption Quiz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .quiz-container {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .question {
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
-        .options {
-            display: flex;
-            flex-direction: column;
-        }
-        .option {
-            margin: 5px 0;
-        }
-        button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        #result {
-            margin-top: 20px;
-            font-weight: bold;
-        }
-        .correct {
-            color: green;
-        }
-        .incorrect {
-            color: red;
-        }
-    </style>
+    <title>Digital Solutions Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
 </head>
-<body>
-    <div class="quiz-container">
-        <h1>Digital Solutions Encryption Quiz</h1>
-        <div id="quiz"></div>
-        <button id="submit">Submit Quiz</button>
-        <div id="result"></div>
+<body class="bg-gray-900 min-h-screen flex items-center justify-center text-white">
+    <div id="app" class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-2xl w-full">
+        <h1 class="text-4xl font-bold mb-8 text-center text-blue-400">Digital Solutions Quiz</h1>
+        <div id="timer-section" class="mb-8">
+            <div class="flex items-center justify-center space-x-4">
+                <input type="number" id="timer-input" class="bg-gray-700 border border-gray-600 rounded p-2 w-20 text-center" value="15" min="1">
+                <label for="timer-input" class="text-gray-300">minutes</label>
+                <button id="start-timer" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-300">Start</button>
+                <button id="stop-timer" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 hidden">Stop</button>
+            </div>
+            <div id="timer-display" class="text-3xl font-bold text-center mt-4 hidden text-yellow-400">00:00</div>
+        </div>
+
+        <div id="quiz-container" class="space-y-8"></div>
+
+        <button id="submit-quiz" class="mt-8 bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition duration-300 w-full text-lg font-semibold">Submit Quiz</button>
+
+        <div id="results" class="mt-8 hidden">
+            <h2 class="text-2xl font-bold mb-4 text-blue-400">Results</h2>
+            <p id="score" class="text-xl mb-4"></p>
+            <ul id="feedback" class="list-disc pl-6 space-y-2"></ul>
+        </div>
     </div>
 
     <script>
         const quizData = [
             {
                 question: "Which of the following is NOT a feature of symmetric encryption algorithms?",
-                options: [
-                    "Uses the same key for encryption and decryption",
-                    "Generally faster than asymmetric algorithms",
-                    "Uses a public and private key pair",
-                    "Examples include AES and DES"
-                ],
-                correct: 2
+                options: ["Uses the same key for encryption and decryption", "Generally faster than asymmetric algorithms", "Uses a public and private key pair", "Examples include AES and DES"],
+                correctAnswer: 2
             },
             {
                 question: "What is the main purpose of hashing in data security?",
-                options: [
-                    "To encrypt data",
-                    "To compress data",
-                    "To verify data integrity",
-                    "To authenticate users"
-                ],
-                correct: 2
+                options: ["To encrypt data", "To compress data", "To verify data integrity", "To authenticate users"],
+                correctAnswer: 2
             },
             {
                 question: "Which encryption algorithm is an example of an asymmetric algorithm?",
-                options: [
-                    "AES",
-                    "DES",
-                    "RSA",
-                    "Blowfish"
-                ],
-                correct: 2
+                options: ["AES", "DES", "RSA", "Blowfish"],
+                correctAnswer: 2
             },
             {
                 question: "What is a key difference between hashing and encryption?",
-                options: [
-                    "Hashing is reversible, encryption is not",
-                    "Encryption is reversible, hashing is not",
-                    "Hashing uses a key, encryption does not",
-                    "Encryption produces a fixed-length output, hashing does not"
-                ],
-                correct: 1
+                options: ["Hashing is reversible, encryption is not", "Encryption is reversible, hashing is not", "Hashing uses a key, encryption does not", "Encryption produces a fixed-length output, hashing does not"],
+                correctAnswer: 1
             },
             {
                 question: "Which of the following best describes the purpose of a digital signature?",
-                options: [
-                    "To encrypt data",
-                    "To compress data",
-                    "To authenticate the sender of a message",
-                    "To speed up data transmission"
-                ],
-                correct: 2
+                options: ["To encrypt data", "To compress data", "To authenticate the sender of a message", "To speed up data transmission"],
+                correctAnswer: 2
             },
             {
                 question: "What is the main advantage of asymmetric encryption over symmetric encryption?",
-                options: [
-                    "It's faster to compute",
-                    "It uses less computer memory",
-                    "It allows secure key exchange over insecure channels",
-                    "It produces smaller ciphertext"
-                ],
-                correct: 2
+                options: ["It's faster to compute", "It uses less computer memory", "It allows secure key exchange over insecure channels", "It produces smaller ciphertext"],
+                correctAnswer: 2
             },
             {
                 question: "In the context of the OSI model, at which layer does encryption typically occur?",
-                options: [
-                    "Physical Layer",
-                    "Data Link Layer",
-                    "Network Layer",
-                    "Application Layer"
-                ],
-                correct: 3
+                options: ["Physical Layer", "Data Link Layer", "Network Layer", "Application Layer"],
+                correctAnswer: 3
             },
             {
                 question: "What does AES stand for?",
-                options: [
-                    "Advanced Encryption Standard",
-                    "Automated Encryption System",
-                    "Asymmetric Encryption Service",
-                    "Advanced Encryption Service"
-                ],
-                correct: 0
+                options: ["Advanced Encryption Standard", "Automated Encryption System", "Asymmetric Encryption Service", "Advanced Encryption Service"],
+                correctAnswer: 0
             },
             {
                 question: "Which of the following is NOT a characteristic of a good hashing algorithm?",
-                options: [
-                    "Deterministic",
-                    "Fast computation",
-                    "Reversible",
-                    "Avalanche effect"
-                ],
-                correct: 2
+                options: ["Deterministic", "Fast computation", "Reversible", "Avalanche effect"],
+                correctAnswer: 2
             },
             {
                 question: "What is the primary purpose of a salt in password hashing?",
-                options: [
-                    "To make the hash taste better",
-                    "To increase the hash length",
-                    "To prevent rainbow table attacks",
-                    "To speed up the hashing process"
-                ],
-                correct: 2
+                options: ["To make the hash taste better", "To increase the hash length", "To prevent rainbow table attacks", "To speed up the hashing process"],
+                correctAnswer: 2
             },
             {
                 question: "Which encryption algorithm has been deprecated due to security vulnerabilities?",
-                options: [
-                    "AES",
-                    "RSA",
-                    "DES",
-                    "SHA-256"
-                ],
-                correct: 2
+                options: ["AES", "RSA", "DES", "SHA-256"],
+                correctAnswer: 2
             },
             {
                 question: "What does HTTPS use to secure data transmission?",
-                options: [
-                    "Hashing",
-                    "Symmetric encryption only",
-                    "Asymmetric encryption only",
-                    "Both symmetric and asymmetric encryption"
-                ],
-                correct: 3
+                options: ["Hashing", "Symmetric encryption only", "Asymmetric encryption only", "Both symmetric and asymmetric encryption"],
+                correctAnswer: 3
             },
             {
                 question: "Which of the following is a correct statement about the Advanced Encryption Standard (AES)?",
-                options: [
-                    "It's an asymmetric encryption algorithm",
-                    "It uses 64-bit block sizes",
-                    "It supports key sizes of 128, 192, and 256 bits",
-                    "It was developed by RSA Security"
-                ],
-                correct: 2
+                options: ["It's an asymmetric encryption algorithm", "It uses 64-bit block sizes", "It supports key sizes of 128, 192, and 256 bits", "It was developed by RSA Security"],
+                correctAnswer: 2
             },
             {
                 question: "What is the main purpose of a Message Authentication Code (MAC)?",
-                options: [
-                    "To encrypt messages",
-                    "To compress messages",
-                    "To verify message integrity and authenticity",
-                    "To speed up message transmission"
-                ],
-                correct: 2
+                options: ["To encrypt messages", "To compress messages", "To verify message integrity and authenticity", "To speed up message transmission"],
+                correctAnswer: 2
             },
             {
                 question: "Which of the following is NOT a common use of asymmetric encryption?",
-                options: [
-                    "Digital signatures",
-                    "Secure key exchange",
-                    "Bulk data encryption",
-                    "User authentication"
-                ],
-                correct: 2
+                options: ["Digital signatures", "Secure key exchange", "Bulk data encryption", "User authentication"],
+                correctAnswer: 2
             },
             {
                 question: "What is the primary difference between SHA-256 and MD5?",
-                options: [
-                    "SHA-256 is faster",
-                    "MD5 is more secure",
-                    "SHA-256 produces a longer hash",
-                    "MD5 is not a hashing algorithm"
-                ],
-                correct: 2
+                options: ["SHA-256 is faster", "MD5 is more secure", "SHA-256 produces a longer hash", "MD5 is not a hashing algorithm"],
+                correctAnswer: 2
             },
             {
                 question: "In public key cryptography, which key is used for encryption?",
-                options: [
-                    "The sender's private key",
-                    "The sender's public key",
-                    "The recipient's private key",
-                    "The recipient's public key"
-                ],
-                correct: 3
+                options: ["The sender's private key", "The sender's public key", "The recipient's private key", "The recipient's public key"],
+                correctAnswer: 3
             },
             {
                 question: "What is a potential security risk of using ECB (Electronic Codebook) mode in block ciphers?",
-                options: [
-                    "It's too slow for practical use",
-                    "It reveals patterns in the plaintext",
-                    "It requires too much computing power",
-                    "It can only encrypt small amounts of data"
-                ],
-                correct: 1
+                options: ["It's too slow for practical use", "It reveals patterns in the plaintext", "It requires too much computing power", "It can only encrypt small amounts of data"],
+                correctAnswer: 1
             },
             {
                 question: "Which of the following best describes the role of a Certificate Authority (CA) in public key infrastructure?",
-                options: [
-                    "To generate encryption keys",
-                    "To encrypt network traffic",
-                    "To issue and verify digital certificates",
-                    "To develop new encryption algorithms"
-                ],
-                correct: 2
+                options: ["To generate encryption keys", "To encrypt network traffic", "To issue and verify digital certificates", "To develop new encryption algorithms"],
+                correctAnswer: 2
             },
             {
                 question: "What is the main purpose of using initialization vectors (IVs) in block cipher encryption modes?",
-                options: [
-                    "To increase the key length",
-                    "To compress the plaintext",
-                    "To add randomness to the encryption process",
-                    "To speed up the encryption algorithm"
-                ],
-                correct: 2
+                options: ["To increase the key length", "To compress the plaintext", "To add randomness to the encryption process", "To speed up the encryption algorithm"],
+                correctAnswer: 2
             }
         ];
 
-        const quizContainer = document.getElementById('quiz');
-        const resultContainer = document.getElementById('result');
-        const submitButton = document.getElementById('submit');
-        let userAnswers = [];
+        let timer;
+        let timeLeft;
 
-        function buildQuiz() {
-            quizData.forEach((questionData, index) => {
+        function renderQuiz() {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
+
+            quizData.forEach((question, index) => {
                 const questionElement = document.createElement('div');
-                questionElement.classList.add('question');
+                questionElement.classList.add('mb-8', 'question-container', 'opacity-0', 'bg-gray-700', 'p-6', 'rounded-lg', 'shadow-md', 'transition', 'duration-300');
                 questionElement.innerHTML = `
-                    <p>${index + 1}. ${questionData.question}</p>
-                    <div class="options">
-                        ${questionData.options.map((option, optionIndex) => `
-                            <label class="option">
-                                <input type="radio" name="question${index}" value="${optionIndex}">
-                                ${option}
-                            </label>
+                    <h2 class="text-2xl font-semibold mb-4 text-blue-300">Question ${index + 1}</h2>
+                    <p class="text-xl mb-4">${question.question}</p>
+                    <div class="space-y-3">
+                        ${question.options.map((option, optionIndex) => `
+                            <div class="flex items-center bg-gray-600 p-3 rounded hover:bg-gray-500 transition duration-300">
+                                <input type="radio" id="q${index}o${optionIndex}" name="q${index}" value="${optionIndex}" class="mr-3 h-5 w-5">
+                                <label for="q${index}o${optionIndex}" class="text-lg cursor-pointer flex-grow">${option}</label>
+                            </div>
                         `).join('')}
+                    </div>
+                    <div class="mt-4 correct-answer hidden">
+                        <p class="text-green-400 font-semibold">Correct Answer: ${question.options[question.correctAnswer]}</p>
                     </div>
                 `;
                 quizContainer.appendChild(questionElement);
+
+                // Animate question appearance
+                gsap.to(questionElement, {opacity: 1, duration: 0.5, delay: index * 0.2});
             });
         }
 
-        function getResults() {
-            const answerContainers = quizContainer.querySelectorAll('.options');
-            let score = 0;
-            let feedback = '';
+        function startTimer() {
+            const timerInput = document.getElementById('timer-input');
+            const timerDisplay = document.getElementById('timer-display');
+            const startButton = document.getElementById('start-timer');
+            const stopButton = document.getElementById('stop-timer');
 
-            answerContainers.forEach((answerContainer, index) => {
-                const userAnswer = (answerContainer.querySelector(`input[name=question${index}]:checked`) || {}).value;
-                userAnswers[index] = userAnswer;
+            timeLeft = parseInt(timerInput.value) * 60;
+            timerDisplay.classList.remove('hidden');
+            startButton.classList.add('hidden');
+            stopButton.classList.remove('hidden');
+            timerInput.disabled = true;
 
-                if (userAnswer == quizData[index].correct) {
-                    score++;
-                    feedback += `<p class="correct">Question ${index + 1}: Correct</p>`;
-                } else {
-                    feedback += `<p class="incorrect">Question ${index + 1}: Incorrect. The correct answer was ${quizData[index].options[quizData[index].correct]}.</p>`;
+            updateTimerDisplay();
+
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timer);
+            const timerDisplay = document.getElementById('timer-display');
+            const startButton = document.getElementById('start-timer');
+            const stopButton = document.getElementById('stop-timer');
+            const timerInput = document.getElementById('timer-input');
+
+            timerDisplay.classList.add('hidden');
+            startButton.classList.remove('hidden');
+            stopButton.classList.add('hidden');
+            timerInput.disabled = false;
+        }
+
+        function updateTimerDisplay() {
+            const timerDisplay = document.getElementById('timer-display');
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function submitQuiz() {
+            clearInterval(timer);
+
+            const results = document.getElementById('results');
+            const score = document.getElementById('score');
+            const feedback = document.getElementById('feedback');
+
+            let correctAnswers = 0;
+
+            quizData.forEach((question, index) => {
+                const selectedAnswer = document.querySelector(`input[name="q${index}"]:checked`);
+                const questionContainer = document.querySelectorAll('.question-container')[index];
+                const correctAnswerElement = questionContainer.querySelector('.correct-answer');
+                
+                correctAnswerElement.classList.remove('hidden');
+                
+                const options = questionContainer.querySelectorAll('.bg-gray-600');
+                
+                if (selectedAnswer) {
+                    const selectedOption = options[parseInt(selectedAnswer.value)];
+                    if (parseInt(selectedAnswer.value) === question.correctAnswer) {
+                        correctAnswers++;
+                        selectedOption.classList.remove('bg-gray-600', 'hover:bg-gray-500');
+                        selectedOption.classList.add('bg-green-600', 'hover:bg-green-700');
+                    } else {
+                        selectedOption.classList.remove('bg-gray-600', 'hover:bg-gray-500');
+                        selectedOption.classList.add('bg-red-600', 'hover:bg-red-700');
+                    }
+                }
+
+                // Highlight the correct answer if it wasn't selected
+                const correctOption = options[question.correctAnswer];
+                if (!selectedAnswer || parseInt(selectedAnswer.value) !== question.correctAnswer) {
+                    correctOption.classList.remove('bg-gray-600', 'hover:bg-gray-500');
+                    correctOption.classList.add('bg-green-600', 'hover:bg-green-700');
                 }
             });
 
-            resultContainer.innerHTML = `
-                <h2>Your score: ${score} out of ${quizData.length}</h2>
-                ${feedback}
-            `;
+            score.textContent = `You got ${correctAnswers} out of ${quizData.length} questions correct.`;
+
+            feedback.innerHTML = '';
+            quizData.forEach((question, index) => {
+                const selectedAnswer = document.querySelector(`input[name="q${index}"]:checked`);
+                const listItem = document.createElement('li');
+                listItem.textContent = `Question ${index + 1}: ${selectedAnswer ? (parseInt(selectedAnswer.value) === question.correctAnswer ? 'Correct' : 'Incorrect') : 'Not answered'}`;
+                listItem.classList.add(selectedAnswer && parseInt(selectedAnswer.value) === question.correctAnswer ? 'text-green-400' : 'text-red-400');
+                feedback.appendChild(listItem);
+            });
+
+            results.classList.remove('hidden');
+            gsap.from(results, {opacity: 0, y: 20, duration: 0.5});
+
+            // Disable all inputs after submission
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.disabled = true;
+            });
+
+            // Hide the submit button
+            document.getElementById('submit-quiz').classList.add('hidden');
         }
 
-        buildQuiz();
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuiz();
 
-        submitButton.addEventListener('click', getResults);
+            document.getElementById('start-timer').addEventListener('click', startTimer);
+            document.getElementById('stop-timer').addEventListener('click', stopTimer);
+            document.getElementById('submit-quiz').addEventListener('click', submitQuiz);
+
+            // Add hover effects to buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    gsap.to(button, {scale: 1.05, duration: 0.2});
+                });
+                button.addEventListener('mouseleave', () => {
+                    gsap.to(button, {scale: 1, duration: 0.2});
+                });
+            });
+        });
     </script>
 </body>
 </html>
